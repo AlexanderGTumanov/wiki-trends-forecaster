@@ -60,7 +60,7 @@ The **utils.py** file provides tools for scraping Wikipedia pageviews, aggregati
   &nbsp;&nbsp;&nbsp;Performs weekly aggregation on **data** provided in the DataFrame format. Optional parameters **categories**, **start**, and **end** allow limiting the data to a select subset of categories between given dates.
 
 - **`to_weekly_parquet(path, categories = None, start = None, end = None)`**:  
-  &nbsp;&nbsp;&nbsp;Performs weekly aggregation on data previously saved in parquet format at the location specified by **path**. Optional parameters **categories**, **start**, and **end** allow limiting the data to a select subset of categories between given dates.
+  &nbsp;&nbsp;&nbsp;Uses an SQL query to perform weekly aggregation on data previously saved in parquet format at the location specified by **path**. Optional parameters **categories**, **start**, and **end** allow limiting the data to a select subset of categories between given dates.
 
 - **`plot(data, forecast = None, categories = None, train_end = None)`**:  
    &nbsp;&nbsp;&nbsp;Plots the time evolution of pageviews for each category in **data**. If a **forecast** is provided, it is plotted alongside the actual values. The **categories** argument can be used to restrict the plot to a subset of categories. The optional **train_end** parameter adds a vertical line marking the end of the model’s training period.
