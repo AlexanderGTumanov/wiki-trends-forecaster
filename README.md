@@ -67,13 +67,13 @@ The **`utils.py`** file provides tools for scraping Wikipedia pageviews, aggrega
 
 The **`prop.py`** file provides tools for forecasting general trends with Prophet.
 
-- **`prep_category(data: pd.DataFrame, category: str) -> pd.DataFrame`**:  
+- **`prep_category(data: pd.DataFrame, category: str)`**:  
   &nbsp;&nbsp;&nbsp;Prepares a single category for use with Prophet. Filters the input **data** to the specified **category**, renames the time column to **ds** and the target column to **y** (Prophet’s required format), converts dates to datetime, and returns a clean, sorted DataFrame.  
 
-- **`forecast_category(df: pd.DataFrame, category: str, horizon: int = 12, kwargs: dict | None = None) -> pd.DataFrame`**:  
+- **`forecast_category(df: pd.DataFrame, category: str, horizon: int = 12, kwargs: dict | None = None)`**:  
   &nbsp;&nbsp;&nbsp;Fits a Prophet model to a single **category** extracted from **df** using `prep_category`. Forecasts **horizon** weeks into the future and returns predicted values along with lower and upper confidence bounds. Additional Prophet options can be passed through **kwargs**.  
 
-- **`forecast(data: pd.DataFrame, horizon: int = 12, categories: list[str] | None = None, kwargs: dict | None = None) -> pd.DataFrame`**:  
+- **`forecast(data: pd.DataFrame, horizon: int = 12, categories: list[str] | None = None, kwargs: dict | None = None)`**:  
   &nbsp;&nbsp;&nbsp;Runs forecasting for one or more **categories** in the input **data** by calling `forecast_category` on each. Returns a combined DataFrame of forecasts, each containing predicted values and uncertainty bounds for the requested horizon.  
 
 
