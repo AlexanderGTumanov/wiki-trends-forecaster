@@ -65,3 +65,5 @@ The **utils.py** file provides tools for scraping Wikipedia pageviews, aggregati
 - **`plot(data, forecast = None, categories = None, train_end = None)`**:  
    &nbsp;&nbsp;&nbsp;Plots the time evolution of pageviews for each category in **data**. If a **forecast** is provided, it is plotted alongside the actual values. The **categories** argument can be used to restrict the plot to a subset of categories. The optional **train_end** parameter adds a vertical line marking the end of the model’s training period.
 
+The **prop.py** file provides tools for forecasting general trends with Prophet.
+
