@@ -94,15 +94,15 @@ def list_category_pages(
     return df.sort_values("page_id").reset_index(drop = True)
 
 def fetch_daily_pageviews(
-    categories: List[str],
+    titles: List[str],
     start: str,
     end: str,
     project: str = "en.wikipedia.org",
-    user_agent: str = "WikiBarometer-Min/0.1 (contact@example.com)",
-    sleep_s: float = 0.1,
     out_type: str = "df",
     out_dir: str | None = None,
-    category_name: str | None = None):
+    category_name: str | None = None,
+    user_agent: str = "WikiBarometer-Min/0.1 (contact@example.com)",
+    sleep_s: float = 0.1):
 
     session = requests.Session()
     session.headers.update({"User-Agent": user_agent})
@@ -128,7 +128,7 @@ def fetch_daily_pageviews(
         base_dir = os.path.join(out_dir, f"category={cat_slug}")
     else:
         base_dir = None
-    for t in categories:
+    for t in titles:
         try:
             items = _one(t)
             if not items:
@@ -182,7 +182,7 @@ def to_weekly_df(data, categories = None, start = None, end = None):
     out = out[(out["week_start"] >= first_monday) & (out["week_start"] <= last_monday)]
     return out[["category", "week_start", "weekly_views"]]
 
-def to_weekly_parquet(data, categories = None, start = None, end = None):
+def to_weekly_parquet(path, categories = None, start = None, end = None):
     conds = []
     target = norm(categories)
     if target:
@@ -196,7 +196,7 @@ def to_weekly_parquet(data, categories = None, start = None, end = None):
     q = f"""
     WITH daily AS (
         SELECT title, CAST(date AS TIMESTAMP) AS date, views, category, year
-        FROM read_parquet('{data}', hive_partitioning=1)
+        FROM read_parquet('{path}', hive_partitioning=1)
     ),
     filtered AS (
         SELECT * FROM daily {where_clause}
@@ -231,7 +231,7 @@ def to_weekly_parquet(data, categories = None, start = None, end = None):
     """
     return duckdb.connect().execute(q).fetchdf()
 
-def plot(data, forecast = None, categories = None, train_end: str | None = None):
+def plot(data, forecast = None, categories = None, train_end = None):
     df = data.copy()
     df["week_start"] = pd.to_datetime(df["week_start"])
     df["cat_norm"] = df["category"].str.lower()
