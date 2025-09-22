@@ -74,6 +74,33 @@ The **`prop.py`** file provides tools for forecasting general trends with Prophe
   &nbsp;&nbsp;&nbsp;Fits a Prophet model to a single **category** extracted from **df** using `prep_category`. Forecasts **horizon** weeks into the future and returns predicted values along with lower and upper confidence bounds. Additional Prophet options can be passed through **kwargs**.  
 
 - **`forecast(data: pd.DataFrame, horizon: int = 12, categories: list[str] | None = None, kwargs: dict | None = None)`**:  
-  &nbsp;&nbsp;&nbsp;Runs forecasting for one or more **categories** in the input **data** by calling `forecast_category` on each. Returns a combined DataFrame of forecasts, each containing predicted values and uncertainty bounds for the requested horizon.  
+  &nbsp;&nbsp;&nbsp;Runs forecasting for one or more **categories** in the input **data** by calling `forecast_category` on each. Returns a combined DataFrame of forecasts, each containing predicted values and uncertainty bounds for the requested horizon.
+
+The **`nn.py`** file provides tools for training and applying feed-forward neural networks to generate short-term forecasts of Wikipedia pageviews.
+
+- **`ReturnForecaster(nn.Module)`**:  
+  &nbsp;&nbsp;&nbsp;A feed-forward neural network for time series forecasting. Takes a fixed **window** of past observations as input and outputs both a mean and log-variance forecast over a fixed **horizon**. Uses fully connected layers with ReLU activations and dropout.  
+
+- **`gaussian_nll_loss(mean: torch.Tensor, logvar: torch.Tensor, target: torch.Tensor)`**:  
+  &nbsp;&nbsp;&nbsp;Computes the Gaussian negative log-likelihood loss. Encourages the model to match both the predicted mean and the uncertainty of the target distribution.  
+
+- **`create_dataset(df: pd.DataFrame, window: int, horizon: int)`**:  
+  &nbsp;&nbsp;&nbsp;Converts raw weekly pageview data into sliding windows of log-transformed values. Returns input sequences of length **window** and target sequences of length **horizon**.  
+
+- **`TimeSeriesDataset(Dataset)`**:  
+  &nbsp;&nbsp;&nbsp;PyTorch dataset wrapper for sequences and targets. Applies baseline-centering by subtracting the last observed value from both input and target (log-delta representation).  
+
+- **`prepare_dataloaders(sequences: np.ndarray, targets: np.ndarray, batch_size = 32, val_ratio = 0.2, shuffle = True)`**:  
+  &nbsp;&nbsp;&nbsp;Splits the dataset into training and validation sets and returns PyTorch dataloaders for each.  
+
+- **`train_model(model: ReturnForecaster, train_loader: DataLoader, valid_loader: DataLoader, epochs: int = 100, lr: float = 1e-3)`**:  
+  &nbsp;&nbsp;&nbsp;Trains the model using Adam optimization and Gaussian NLL loss. Tracks root mean squared error (RMSE) on the log-delta scale for both training and validation sets.  
+
+- **`forecast(data: pd.DataFrame, model: ReturnForecaster, horizon = 12, categories: list[str] | None = None)`**:  
+  &nbsp;&nbsp;&nbsp;Generates forecasts for each category in **data**. Applies the same log-delta transformation as in training, then reconstructs predictions on the original scale. Returns point forecasts and 95% prediction intervals.  
+
+- **`plot_training_history(history: pd.DataFrame)`**:  
+  &nbsp;&nbsp;&nbsp;Plots the training and validation RMSE over epochs to visualize model performance.  
+
 
 
