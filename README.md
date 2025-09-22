@@ -34,7 +34,7 @@ Notebook `/notebooks/wiki_trends_forecaster.ipynb` is divided into three main pa
 
 ## Contents of the `/src` folder
 
-The **utils.py** file provides tools for scraping Wikipedia pageviews, aggregating the data, and plotting results.
+The **`utils.py`** file provides tools for scraping Wikipedia pageviews, aggregating the data, and plotting results.
 
 - **`list_category_pages(
     category: str,
@@ -65,5 +65,15 @@ The **utils.py** file provides tools for scraping Wikipedia pageviews, aggregati
 - **`plot(data, forecast = None, categories = None, train_end = None)`**:  
    &nbsp;&nbsp;&nbsp;Plots the time evolution of pageviews for each category in **data**. If a **forecast** is provided, it is plotted alongside the actual values. The **categories** argument can be used to restrict the plot to a subset of categories. The optional **train_end** parameter adds a vertical line marking the end of the model’s training period.
 
-The **prop.py** file provides tools for forecasting general trends with Prophet.
+The **`prop.py`** file provides tools for forecasting general trends with Prophet.
+
+- **`prep_category(data: pd.DataFrame, category: str) -> pd.DataFrame`**:  
+  &nbsp;&nbsp;&nbsp;Prepares a single category for use with Prophet. Filters the input **data** to the specified **category**, renames the time column to **ds** and the target column to **y** (Prophet’s required format), converts dates to datetime, and returns a clean, sorted DataFrame.  
+
+- **`forecast_category(df: pd.DataFrame, category: str, horizon: int = 12, kwargs: dict | None = None) -> pd.DataFrame`**:  
+  &nbsp;&nbsp;&nbsp;Fits a Prophet model to a single **category** extracted from **df** using `prep_category`. Forecasts **horizon** weeks into the future and returns predicted values along with lower and upper confidence bounds. Additional Prophet options can be passed through **kwargs**.  
+
+- **`forecast(data: pd.DataFrame, horizon: int = 12, categories: list[str] | None = None, kwargs: dict | None = None) -> pd.DataFrame`**:  
+  &nbsp;&nbsp;&nbsp;Runs forecasting for one or more **categories** in the input **data** by calling `forecast_category` on each. Returns a combined DataFrame of forecasts, each containing predicted values and uncertainty bounds for the requested horizon.  
+
 
